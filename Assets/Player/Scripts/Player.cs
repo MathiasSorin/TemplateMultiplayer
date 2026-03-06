@@ -1,12 +1,18 @@
-using StarterAssets;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private ThirdPersonController _controller;
+    private PlayerController _controller;
     [SerializeField]
     private PlayerInteraction _interaction;
     [SerializeField]
-    private StarterAssetsInputs _inputs;
+    private PlayerInputs _inputs;
+
+    public PlayerController Controller => _controller;
+    public PlayerInteraction Interaction => _interaction;
+    public PlayerInputs Inputs => _inputs;
+
+    [SerializeField]
+    public Transform grabTransform;
 }
