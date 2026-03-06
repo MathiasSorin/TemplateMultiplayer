@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Paintable : MonoBehaviour {
     const int TEXTURE_SIZE = 1024;
@@ -13,6 +14,8 @@ public class Paintable : MonoBehaviour {
     Renderer rend;
 
     int maskTextureID = Shader.PropertyToID("_MaskTexture");
+
+    public Texture2D customMaskTexture;
 
     public RenderTexture getMask() => maskRenderTexture;
     public RenderTexture getUVIslands() => uvIslandsRenderTexture;

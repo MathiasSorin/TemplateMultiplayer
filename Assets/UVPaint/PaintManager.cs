@@ -38,9 +38,18 @@ public class PaintManager : Singleton<PaintManager>{
         RenderTexture support = paintable.getSupport();
         Renderer rend = paintable.getRenderer();
 
-        command.SetRenderTarget(mask);
-        command.SetRenderTarget(extend);
-        command.SetRenderTarget(support);
+        if(paintable.customMaskTexture != null && mask != null){
+            Graphics.Blit(paintable.customMaskTexture, mask);
+            command.Blit(mask, support);
+            command.Blit(mask, extend, extendMaterial);
+            Graphics.ExecuteCommandBuffer(command);
+            command.Clear();
+        }
+        else{
+            command.SetRenderTarget(mask);
+            command.SetRenderTarget(extend);
+            command.SetRenderTarget(support);
+        }
 
         paintMaterial.SetFloat(prepareUVID, 1);
         command.SetRenderTarget(uvIslands);
