@@ -1,5 +1,8 @@
-﻿using UnityEngine;
-#if ENABLE_INPUT_SYSTEM 
+﻿using Cinemachine;
+using UnityEngine;
+using UnityEngine.Animations;
+
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
@@ -25,6 +28,8 @@ public class PlayerController : MonoBehaviour
 
     [Tooltip("Acceleration and deceleration")]
     public float SpeedChangeRate = 10.0f;
+    public float FreeLookSensitivity = 1.0f;
+    public float AimSensitivity = 0.8f;
 
     public AudioClip LandingAudioClip;
     public AudioClip[] FootstepAudioClips;
@@ -84,6 +89,7 @@ public class PlayerController : MonoBehaviour
     private float _rotationVelocity;
     private float _verticalVelocity;
     private float _terminalVelocity = 53.0f;
+    private float _sensitivity = 1.0f;
 
     // timeout deltatime
     private float _jumpTimeoutDelta;
@@ -103,6 +109,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private PlayerInputs _input;
     private GameObject _mainCamera;
+
+    [SerializeField]
+    private CinemachineVirtualCamera _aimVirtualCamera;
 
     private const float _threshold = 0.01f;
 
@@ -157,6 +166,7 @@ public class PlayerController : MonoBehaviour
         JumpAndGravity();
         GroundedCheck();
         Move();
+        Aim();
     }
 
     private void LateUpdate()
@@ -196,8 +206,8 @@ public class PlayerController : MonoBehaviour
             //Don't multiply mouse input by Time.deltaTime;
             float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-            _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-            _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+            _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier * _sensitivity;
+            _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier * _sensitivity;
         }
 
         // clamp our rotations so our values are limited 360 degrees
@@ -207,6 +217,20 @@ public class PlayerController : MonoBehaviour
         // Cinemachine will follow this target
         CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
             _cinemachineTargetYaw, 0.0f);
+    }
+
+    private void Aim()
+    {
+        if (_input.aim)
+        {
+            SetSensitivity(AimSensitivity);
+            _aimVirtualCamera.gameObject.SetActive(true);
+        }
+        else
+        {
+            SetSensitivity(FreeLookSensitivity);
+            _aimVirtualCamera.gameObject.SetActive(false);
+        }
     }
 
     private void Move()
@@ -385,5 +409,10 @@ public class PlayerController : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
         }
+    }
+
+    private void SetSensitivity(float newSensitivity)
+    {
+        _sensitivity = newSensitivity;
     }
 }

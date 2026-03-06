@@ -21,7 +21,7 @@ public class Grabbable : Interactable
         rb.isKinematic = true;
         return this;
     }
-    public virtual void Use() {}
+    public virtual void Use(bool isUsed) {}
     public virtual void Drop() {}
     public virtual void Throw(Vector3 direction, float force)
     {

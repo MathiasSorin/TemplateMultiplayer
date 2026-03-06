@@ -6,7 +6,7 @@ public class PlayerInteraction : MonoBehaviour
     private PlayerInputs _input;
 
     private Interactable highlightedInteractable;
-    private Grabbable grabbable;
+    private Grabbable heldObject;
 
     public float throwForce = 10f;
 
@@ -18,32 +18,64 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
+        Use();
         Interaction();
+    }
+
+    private void Use()
+    {
+       if(_input.use)
+        {
+            if(heldObject!=null)
+            {
+                heldObject.Use(true);
+            }
+        }
+        else
+        {
+            if(heldObject!=null)
+            {
+                heldObject.Use(false);
+            }
+        }
     }
 
     private void Interaction()
     {
         if(_input.interact)
         {
-            if(highlightedInteractable!=null)
+            if(highlightedInteractable!=null && heldObject==null)
             {
                 if (highlightedInteractable.GetComponent<Grabbable>() is Grabbable obj)
                 {
-                    grabbable = obj;
+                    highlightedInteractable.Interact(player);
+                    Grab(obj);
                 }
-                highlightedInteractable.Interact(player);
+                else
+                {
+                    highlightedInteractable.Interact(player);
+                }
             }
-            else if(grabbable!=null)
+            else if(heldObject!=null)
             {
-                grabbable.Throw(player.grabTransform.forward, throwForce);
-                grabbable = null;
+                heldObject.Use(false);
+                heldObject.Throw(player.grabTransform.forward, throwForce);
+                heldObject = null;
             }
             _input.interact = false;
         }
     }
 
+    private void Grab(Grabbable obj)
+    {
+        heldObject = obj;
+        heldObject.Highlight(false);
+        highlightedInteractable = null;
+    }
+
     private void OnTriggerStay(Collider collider)
     {
+        if (heldObject) return;
         Interactable interactable = collider.GetComponent<Interactable>();
         if(interactable!=null)
         {
@@ -54,6 +86,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void OnTriggerExit(Collider collider)
     {
+        if (heldObject) return;
         Interactable interactable = collider.GetComponent<Interactable>();
         if(interactable!=null)
         {
