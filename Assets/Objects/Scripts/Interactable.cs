@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    protected Outline outline;
+    protected QuickOutline outline;
 
     protected virtual void Awake()
     {
-        outline = GetComponent<Outline>();
+        outline = GetComponent<QuickOutline>();
         if(outline==null)
         {
-            outline = gameObject.AddComponent<Outline>();
+            outline = gameObject.AddComponent<QuickOutline>();
         }
     }
 
@@ -17,12 +17,12 @@ public class Interactable : MonoBehaviour
     {
         if(on)
         {
-            outline.OutlineMode = Outline.Mode.OutlineVisible;
+            outline.OutlineMode = QuickOutline.Mode.OutlineVisible;
             outline.outlineColor.a = 1;
         }
         else
         {
-            outline.OutlineMode = Outline.Mode.OutlineHidden;
+            outline.OutlineMode = QuickOutline.Mode.OutlineHidden;
             outline.outlineColor.a = 0;
         }
     }
