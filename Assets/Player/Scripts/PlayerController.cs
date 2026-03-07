@@ -110,6 +110,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInputs _input;
     private GameObject _mainCamera;
 
+    private bool rotateOnMove = true;
+
     [SerializeField]
     private CinemachineVirtualCamera _aimVirtualCamera;
 
@@ -219,15 +221,35 @@ public class PlayerController : MonoBehaviour
             _cinemachineTargetYaw, 0.0f);
     }
 
+    [SerializeField]
+    private LayerMask layermask;
+    
+    public Vector3 mouseWorldPosition = Vector3.zero;
+
     private void Aim()
     {
         if (_input.aim)
         {
+            SetRotateOnMove(false);
             SetSensitivity(AimSensitivity);
             _aimVirtualCamera.gameObject.SetActive(true);
+
+            Vector2 ScreenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            Ray ray = _mainCamera.GetComponent<Camera>().ScreenPointToRay(ScreenCenter);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, layermask))
+            {
+                mouseWorldPosition = raycastHit.point;
+            }
+
+            Vector3 worldAimTarget = mouseWorldPosition;
+            worldAimTarget.y = transform.position.y;
+            Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
+
+            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
         }
         else
         {
+            SetRotateOnMove(true);
             SetSensitivity(FreeLookSensitivity);
             _aimVirtualCamera.gameObject.SetActive(false);
         }
@@ -283,7 +305,10 @@ public class PlayerController : MonoBehaviour
                 RotationSmoothTime);
 
             // rotate to face input direction relative to camera position
-            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            if (rotateOnMove)
+            {
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
         }
 
 
@@ -414,5 +439,10 @@ public class PlayerController : MonoBehaviour
     private void SetSensitivity(float newSensitivity)
     {
         _sensitivity = newSensitivity;
+    }
+
+    private void SetRotateOnMove(bool newRotateOnMove)
+    {
+        rotateOnMove = newRotateOnMove;
     }
 }

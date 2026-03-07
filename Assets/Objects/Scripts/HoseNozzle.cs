@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HoseNozzle : Grabbable
+public class HoseNozzle : Shootable
 {
     [SerializeField]
     ParticleSystem waterParticleSystem;
