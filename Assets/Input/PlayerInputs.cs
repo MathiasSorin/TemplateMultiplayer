@@ -11,6 +11,8 @@ public class PlayerInputs : MonoBehaviour
 	public bool jump;
 	public bool sprint;
 	public bool interact;
+	public bool aim;
+	public bool use;
 
 	[Header("Movement Settings")]
 	public bool analogMovement;
@@ -47,6 +49,16 @@ public class PlayerInputs : MonoBehaviour
 	{
 		InteractInput(value.isPressed);
 	}
+
+	public void OnAim(InputValue value)
+	{
+		AimInput(value.isPressed);
+	}
+
+	public void OnUse(InputValue value)
+	{
+		UseInput(value.isPressed);
+	}
 #endif
 
 
@@ -73,6 +85,16 @@ public class PlayerInputs : MonoBehaviour
 	public void InteractInput(bool newInteractState)
 	{
 		interact = newInteractState;
+	}
+
+	public void AimInput(bool newAimState)
+	{
+		aim = newAimState;
+	}
+
+	public void UseInput(bool newUseState)
+	{
+		use = newUseState;
 	}
 
 	private void OnApplicationFocus(bool hasFocus)

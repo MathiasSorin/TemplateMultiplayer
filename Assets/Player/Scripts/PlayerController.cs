@@ -1,5 +1,8 @@
-﻿using UnityEngine;
-#if ENABLE_INPUT_SYSTEM 
+﻿using Cinemachine;
+using UnityEngine;
+using UnityEngine.Animations;
+
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
@@ -25,6 +28,8 @@ public class PlayerController : MonoBehaviour
 
     [Tooltip("Acceleration and deceleration")]
     public float SpeedChangeRate = 10.0f;
+    public float FreeLookSensitivity = 1.0f;
+    public float AimSensitivity = 0.8f;
 
     public AudioClip LandingAudioClip;
     public AudioClip[] FootstepAudioClips;
@@ -84,6 +89,7 @@ public class PlayerController : MonoBehaviour
     private float _rotationVelocity;
     private float _verticalVelocity;
     private float _terminalVelocity = 53.0f;
+    private float _sensitivity = 1.0f;
 
     // timeout deltatime
     private float _jumpTimeoutDelta;
@@ -103,6 +109,11 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private PlayerInputs _input;
     private GameObject _mainCamera;
+
+    private bool rotateOnMove = true;
+
+    [SerializeField]
+    private CinemachineVirtualCamera _aimVirtualCamera;
 
     private const float _threshold = 0.01f;
 
@@ -157,6 +168,7 @@ public class PlayerController : MonoBehaviour
         JumpAndGravity();
         GroundedCheck();
         Move();
+        Aim();
     }
 
     private void LateUpdate()
@@ -196,8 +208,8 @@ public class PlayerController : MonoBehaviour
             //Don't multiply mouse input by Time.deltaTime;
             float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-            _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-            _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+            _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier * _sensitivity;
+            _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier * _sensitivity;
         }
 
         // clamp our rotations so our values are limited 360 degrees
@@ -207,6 +219,40 @@ public class PlayerController : MonoBehaviour
         // Cinemachine will follow this target
         CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
             _cinemachineTargetYaw, 0.0f);
+    }
+
+    [SerializeField]
+    private LayerMask layermask;
+    
+    public Vector3 mouseWorldPosition = Vector3.zero;
+
+    private void Aim()
+    {
+        if (_input.aim)
+        {
+            SetRotateOnMove(false);
+            SetSensitivity(AimSensitivity);
+            _aimVirtualCamera.gameObject.SetActive(true);
+
+            Vector2 ScreenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            Ray ray = _mainCamera.GetComponent<Camera>().ScreenPointToRay(ScreenCenter);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, layermask))
+            {
+                mouseWorldPosition = raycastHit.point;
+            }
+
+            Vector3 worldAimTarget = mouseWorldPosition;
+            worldAimTarget.y = transform.position.y;
+            Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
+
+            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+        }
+        else
+        {
+            SetRotateOnMove(true);
+            SetSensitivity(FreeLookSensitivity);
+            _aimVirtualCamera.gameObject.SetActive(false);
+        }
     }
 
     private void Move()
@@ -259,7 +305,10 @@ public class PlayerController : MonoBehaviour
                 RotationSmoothTime);
 
             // rotate to face input direction relative to camera position
-            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            if (rotateOnMove)
+            {
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
         }
 
 
@@ -385,5 +434,15 @@ public class PlayerController : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
         }
+    }
+
+    private void SetSensitivity(float newSensitivity)
+    {
+        _sensitivity = newSensitivity;
+    }
+
+    private void SetRotateOnMove(bool newRotateOnMove)
+    {
+        rotateOnMove = newRotateOnMove;
     }
 }
