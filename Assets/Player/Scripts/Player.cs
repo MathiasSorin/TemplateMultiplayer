@@ -15,4 +15,31 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     public Transform grabTransform;
+
+    EnumPlayerState _state = EnumPlayerState.Free;
+    public EnumPlayerState State
+    {
+        get => _state;
+        set
+        {
+            _state = value;
+            switch (_state)
+            {
+                case EnumPlayerState.Free:
+                    _controller.enabled = true;
+                    _interaction.enabled = true;
+                    break;
+                case EnumPlayerState.Interacting:
+                    _controller.enabled = false;
+                    _interaction.enabled = false;
+                    break;
+            }
+        }
+    }
+}
+
+public enum EnumPlayerState
+{
+    Free,
+    Interacting
 }
