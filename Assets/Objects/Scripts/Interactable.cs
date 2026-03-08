@@ -7,10 +7,6 @@ public class Interactable : MonoBehaviour
     protected virtual void Awake()
     {
         outline = GetComponent<QuickOutline>();
-        if(outline==null)
-        {
-            outline = gameObject.AddComponent<QuickOutline>();
-        }
     }
 
     public virtual void Highlight(bool on)
