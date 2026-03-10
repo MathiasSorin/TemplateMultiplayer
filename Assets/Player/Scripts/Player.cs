@@ -26,11 +26,13 @@ public class Player : MonoBehaviour
             switch (_state)
             {
                 case EnumPlayerState.Free:
-                    _controller.enabled = true;
+                    _inputs.interact = false;
                     _interaction.enabled = true;
+                    _inputs.EnablePlayerInput(true);
                     break;
                 case EnumPlayerState.Interacting:
-                    _controller.enabled = false;
+                    _inputs.EnablePlayerInput(false);
+                    _interaction.DisablePlayerInteraction();
                     _interaction.enabled = false;
                     break;
             }
