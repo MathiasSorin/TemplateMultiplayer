@@ -113,7 +113,6 @@ public class PlayerInteraction : MonoBehaviour
     {
         if(highlightedInteractable!=null)
         {
-            Debug.Log(highlightedInteractable.name);
             highlightedInteractable.Highlight(false);
             highlightedInteractable = null;
         }
