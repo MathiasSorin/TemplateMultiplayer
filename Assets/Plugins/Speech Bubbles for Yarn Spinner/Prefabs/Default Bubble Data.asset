@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Default Bubble Data
   m_EditorClassIdentifier: 
   characterDisplayName: 
-  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textColor: {r: 0, g: 0, b: 0, a: 1}
   nameplateBackgroundColor: {r: 0.7830189, g: 0.7830189, b: 0.7830189, a: 1}
   nameplateTextColor: {r: 0, g: 0, b: 0, a: 1}
