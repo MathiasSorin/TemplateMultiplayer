@@ -106,4 +106,16 @@ public class PlayerInputs : MonoBehaviour
 	{
 		Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 	}
+
+	public void EnablePlayerInput(bool enable)
+	{
+		if (enable)
+		{
+			InputSystem.actions.Enable();
+		}
+		else
+		{
+			InputSystem.actions.Disable();
+		}
+	}
 }

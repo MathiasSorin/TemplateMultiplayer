@@ -597,7 +597,7 @@ MonoBehaviour:
   sideIndicatorPadding: 0
   dotIndicatorPadding: 0
   namePlatePadding: 0
-  typewriterStyle: 2
+  typewriterStyle: 1
   typewriterLettersPerSecond: 20
   typewriterWordsPerSecond: 5
   Typewriter:
@@ -663,9 +663,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   defaultBubbleData: {fileID: 11400000, guid: edc58cb8e2ae448a18c97103dd4a0683, type: 2}
-  OnTextAppeared:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5222936810988845574
 GameObject:
   m_ObjectHideFlags: 0
@@ -810,8 +807,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 06c379b65993c45abaf81fc4b5c74732, type: 2}
-  m_sharedMaterial: {fileID: -3578269672894139989, guid: 06c379b65993c45abaf81fc4b5c74732, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c65990f5386ae4fbe922c2e7ce2bf5d9, type: 2}
+  m_sharedMaterial: {fileID: -1828950150393491565, guid: c65990f5386ae4fbe922c2e7ce2bf5d9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

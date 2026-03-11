@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Sign : Talkable
+public class NPC : Talkable
 {
     public override void Interact(Player player)
     {

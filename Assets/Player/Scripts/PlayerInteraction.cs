@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 public class PlayerInteraction : MonoBehaviour
 {
     private Player player;
-    private PlayerInputs _input;
+    private PlayerInputs _inputs;
     private PlayerController _controller;
 
     private Interactable highlightedInteractable;
@@ -16,7 +16,7 @@ public class PlayerInteraction : MonoBehaviour
     void Start()
     {
         player = GetComponent<Player>();
-        _input = player.Inputs;
+        _inputs = player.Inputs;
         _controller = player.Controller;
     }
 
@@ -38,7 +38,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Use()
     {
-       if(_input.use)
+       if(_inputs.use)
         {
             if(heldObject!=null)
             {
@@ -56,7 +56,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Interaction()
     {
-        if(_input.interact)
+        if(_inputs.interact)
         {
             if(highlightedInteractable!=null && heldObject==null)
             {
@@ -76,7 +76,7 @@ public class PlayerInteraction : MonoBehaviour
                 heldObject.Throw(player.grabTransform.forward, throwForce);
                 heldObject = null;
             }
-            _input.interact = false;
+            _inputs.interact = false;
         }
     }
 
@@ -89,7 +89,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void OnTriggerStay(Collider collider)
     {
-        if (heldObject) return;
+        if (heldObject || player.State == EnumPlayerState.Interacting) return;
         Interactable interactable = collider.GetComponent<Interactable>();
         if(interactable!=null)
         {
@@ -106,6 +106,15 @@ public class PlayerInteraction : MonoBehaviour
         {
             highlightedInteractable = null;
             interactable.Highlight(false);
+        }
+    }
+
+    public void DisablePlayerInteraction()
+    {
+        if(highlightedInteractable!=null)
+        {
+            highlightedInteractable.Highlight(false);
+            highlightedInteractable = null;
         }
     }
 }
