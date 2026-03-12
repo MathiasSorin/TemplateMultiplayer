@@ -78,6 +78,11 @@ public class PlayerController : MonoBehaviour
     [Tooltip("For locking the camera position on all axis")]
     public bool LockCameraPosition = false;
 
+    [SerializeField]
+    private LayerMask layermask;
+    
+    public Vector3 mouseWorldPosition = Vector3.zero;
+
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -221,11 +226,6 @@ public class PlayerController : MonoBehaviour
             _cinemachineTargetYaw, 0.0f);
     }
 
-    [SerializeField]
-    private LayerMask layermask;
-    
-    public Vector3 mouseWorldPosition = Vector3.zero;
-
     private void Aim()
     {
         if (_input.aim)
@@ -245,6 +245,7 @@ public class PlayerController : MonoBehaviour
             worldAimTarget.y = transform.position.y;
             Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
 
+            //TODO make this rotation number a variable
             transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
         }
         else

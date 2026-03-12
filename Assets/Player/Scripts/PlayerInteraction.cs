@@ -30,6 +30,7 @@ public class PlayerInteraction : MonoBehaviour
         if (heldObject != null && heldObject is Shootable shoo)
         {
             Vector3 aimDirection = (_controller.mouseWorldPosition-shoo.shootPoint.position).normalized;
+            //TODO make this rotation number a variable
             shoo.shootPoint.forward = Vector3.Lerp(shoo.shootPoint.forward, aimDirection, Time.deltaTime * 20f);
         }
     }
