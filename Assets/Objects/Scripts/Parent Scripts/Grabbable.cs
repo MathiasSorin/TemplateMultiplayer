@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
 public class Grabbable : Interactable
 {
-    public Player holder;
-    [SerializeField]
+    public Type canBeUsedOnType;
+
+    private Player holder;
     private Rigidbody rb;
 
     protected override void Awake()
@@ -21,13 +23,26 @@ public class Grabbable : Interactable
         rb.isKinematic = true;
         return this;
     }
-    public virtual void Use(bool isUsed) {}
-    public virtual void Drop() {}
+
+    public virtual void Use(bool isUsed, Interactable target = null) {}
+
+    public virtual void Drop()
+    {
+        holder = null;
+        transform.SetParent(null);
+        EnablePhysics(true);
+    }
+
     public virtual void Throw(Vector3 direction, float force)
     {
         holder = null;
         transform.SetParent(null);
-        rb.isKinematic = false;
+        EnablePhysics(true);
         rb.AddForce(direction.normalized * force, ForceMode.Impulse);
+    }
+
+    protected void EnablePhysics(bool on)
+    {
+        rb.isKinematic = !on;
     }
 }
