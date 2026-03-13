@@ -79,9 +79,12 @@ public class PlayerController : MonoBehaviour
     public bool LockCameraPosition = false;
 
     [SerializeField]
-    private LayerMask layermask;
+    private Player player;
+
+    [SerializeField]
+    private LayerMask aimLayerMask;
     
-    public Vector3 mouseWorldPosition = Vector3.zero;
+    public Vector3 aimMouseWorldPosition = Vector3.zero;
 
     // cinemachine
     private float _cinemachineTargetYaw;
@@ -230,30 +233,37 @@ public class PlayerController : MonoBehaviour
     {
         if (_input.aim)
         {
+            player.StateAim = EnumPlayerAimState.Aiming;
             SetRotateOnMove(false);
             SetSensitivity(AimSensitivity);
             _aimVirtualCamera.gameObject.SetActive(true);
-
-            Vector2 ScreenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            Ray ray = _mainCamera.GetComponent<Camera>().ScreenPointToRay(ScreenCenter);
-            if (Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, layermask))
-            {
-                mouseWorldPosition = raycastHit.point;
-            }
-
-            Vector3 worldAimTarget = mouseWorldPosition;
-            worldAimTarget.y = transform.position.y;
-            Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
-
             //TODO make this rotation number a variable
-            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+            transform.forward = Vector3.Lerp(transform.forward, GetAimTargetPosition(), Time.deltaTime * 20f);
         }
         else
         {
+            player.StateAim = EnumPlayerAimState.Free;
             SetRotateOnMove(true);
             SetSensitivity(FreeLookSensitivity);
             _aimVirtualCamera.gameObject.SetActive(false);
+            GetAimTargetPosition();
         }
+
+    }
+
+    private Vector3 GetAimTargetPosition()
+    {
+        Vector2 ScreenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        Ray ray = _mainCamera.GetComponent<Camera>().ScreenPointToRay(ScreenCenter);
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, aimLayerMask))
+        {
+            aimMouseWorldPosition = raycastHit.point;
+        }
+
+        Vector3 worldAimTarget = aimMouseWorldPosition;
+        worldAimTarget.y = transform.position.y;
+        Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
+        return aimDirection;
     }
 
     private void Move()

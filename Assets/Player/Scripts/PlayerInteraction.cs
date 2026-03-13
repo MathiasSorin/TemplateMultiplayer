@@ -27,11 +27,15 @@ public class PlayerInteraction : MonoBehaviour
 
     private void RotateShootable()
     {
-        if (heldObject != null && heldObject is Shootable shoo)
+        if (heldObject != null && heldObject is Shootable shootable)
         {
-            Vector3 aimDirection = (_controller.mouseWorldPosition-shoo.shootPoint.position).normalized;
+            Vector3 aimDirection = (_controller.aimMouseWorldPosition-shootable.shootPoint.position).normalized;
+            if(player.StateAim != EnumPlayerAimState.Aiming)
+            {
+                aimDirection = player.transform.forward; // Keep the shoot point level on the horizontal plane
+            }
             //TODO make this rotation number a variable
-            shoo.shootPoint.forward = Vector3.Lerp(shoo.shootPoint.forward, aimDirection, Time.deltaTime * 20f);
+            shootable.shootPoint.forward = Vector3.Lerp(shootable.shootPoint.forward, aimDirection, Time.deltaTime * 20f);
         }
     }
 
@@ -102,7 +106,7 @@ public class PlayerInteraction : MonoBehaviour
     private void OnTriggerStay(Collider collider)
     {
         //TODO add method to find closest interactable if there are multiple in range
-        if (player.State == EnumPlayerState.Interacting) return;
+        if (player.StateInteraction == EnumPlayerInteractionState.Interacting) return;
 
         Interactable interactable = collider.GetComponent<Interactable>();
 

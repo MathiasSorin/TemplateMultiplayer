@@ -8,13 +8,13 @@ public class Talkable : Interactable
     public virtual void Talk()
     {
         GameManager.Instance.dialogueRunner.StartDialogue(dialogueNode);
-        GameManager.Instance.player.State = EnumPlayerState.Interacting;
+        GameManager.Instance.player.StateInteraction = EnumPlayerInteractionState.Interacting;
         GameManager.Instance.dialogueRunner.onDialogueComplete.AddListener(OnDialogueComplete);
     }
 
     private void OnDialogueComplete()
     {
-        GameManager.Instance.player.State = EnumPlayerState.Free;
+        GameManager.Instance.player.StateInteraction = EnumPlayerInteractionState.Free;
         GameManager.Instance.dialogueRunner.onDialogueComplete.RemoveListener(OnDialogueComplete);
     }
 }

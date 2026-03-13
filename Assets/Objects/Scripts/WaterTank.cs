@@ -45,6 +45,7 @@ public class WaterTank : Grabbable, IConnectableSource
         {
             connector.transform.parent = connectionTransform;
             connector.transform.position = connectionTransform.position;
+            connector.transform.rotation = connectionTransform.rotation;
         }
         else
         {

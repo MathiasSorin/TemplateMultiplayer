@@ -16,21 +16,21 @@ public class Player : MonoBehaviour
     [SerializeField]
     public Transform grabTransform;
 
-    EnumPlayerState _state = EnumPlayerState.Free;
-    public EnumPlayerState State
+    EnumPlayerInteractionState _stateInteraction = EnumPlayerInteractionState.Free;
+    public EnumPlayerInteractionState StateInteraction
     {
-        get => _state;
+        get => _stateInteraction;
         set
         {
-            _state = value;
-            switch (_state)
+            _stateInteraction = value;
+            switch (_stateInteraction)
             {
-                case EnumPlayerState.Free:
+                case EnumPlayerInteractionState.Free:
                     _inputs.interact = false;
                     _interaction.enabled = true;
                     _inputs.EnablePlayerInput(true);
                     break;
-                case EnumPlayerState.Interacting:
+                case EnumPlayerInteractionState.Interacting:
                     _inputs.EnablePlayerInput(false);
                     _interaction.DisablePlayerInteraction();
                     _interaction.enabled = false;
@@ -38,10 +38,33 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    EnumPlayerAimState _stateAim = EnumPlayerAimState.Free;
+    public EnumPlayerAimState StateAim
+    {
+        get => _stateAim;
+        set
+        {
+            _stateAim = value;
+            switch (_stateAim)
+            {
+                case EnumPlayerAimState.Free:
+                    break;
+                case EnumPlayerAimState.Aiming:
+                    break;
+            }
+        }
+    }
 }
 
-public enum EnumPlayerState
+public enum EnumPlayerInteractionState
 {
     Free,
-    Interacting
+    Interacting,
+}
+
+public enum EnumPlayerAimState
+{
+    Free,
+    Aiming,
 }

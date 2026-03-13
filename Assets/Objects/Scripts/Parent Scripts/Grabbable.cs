@@ -7,11 +7,13 @@ public class Grabbable : Interactable
 
     private Player holder;
     private Rigidbody rb;
+    private Collider col;
 
     protected override void Awake()
     {
         base.Awake();
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
     }
 
     public virtual Grabbable Grab(Player player)
@@ -20,7 +22,7 @@ public class Grabbable : Interactable
         transform.SetParent(player.grabTransform);
         transform.position = player.grabTransform.position;
         transform.rotation = player.grabTransform.rotation;
-        rb.isKinematic = true;
+        EnablePhysics(false);
         return this;
     }
 
@@ -30,7 +32,7 @@ public class Grabbable : Interactable
     {
         holder = null;
         transform.SetParent(null);
-        EnablePhysics(true);
+        EnablePhysics(false);
     }
 
     public virtual void Throw(Vector3 direction, float force)
@@ -44,5 +46,6 @@ public class Grabbable : Interactable
     protected void EnablePhysics(bool on)
     {
         rb.isKinematic = !on;
+        col.isTrigger = !on;
     }
 }
