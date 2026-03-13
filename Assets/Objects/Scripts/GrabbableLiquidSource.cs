@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class WaterTank : Grabbable, IConnectableSource
+public class GrabbableLiquidSource : Grabbable, IConnectableSource
 {
     [SerializeField]
-    private float maxWaterAmount;
+    private float maxliquidAmount;
     [SerializeField]
-    private float waterAmount;
+    private float liquidAmount;
     [SerializeField]
     private Transform connectionTransform;
 
@@ -26,13 +26,13 @@ public class WaterTank : Grabbable, IConnectableSource
 
     public bool UpdateSourceAmount(float amount)
     {
-        if(amount < 0 && waterAmount <= 0)
+        if(amount < 0 && liquidAmount <= 0)
         {
             return false;
         }
         else
         {
-            waterAmount = Mathf.Clamp(waterAmount + amount, 0, maxWaterAmount);
+            liquidAmount = Mathf.Clamp(liquidAmount + amount, 0, maxliquidAmount);
             SetShaderFill();
             return true;
         }
@@ -54,8 +54,14 @@ public class WaterTank : Grabbable, IConnectableSource
         
     }
 
+    public void Fill()
+    {
+        liquidAmount = maxliquidAmount;
+        SetShaderFill();
+    }
+
     private void SetShaderFill()
     {
-        rd.material.SetFloat("_Fill", waterAmount/100f);
+        rd.material.SetFloat("_Fill", liquidAmount/100f);
     }
 }

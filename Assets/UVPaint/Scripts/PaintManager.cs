@@ -88,7 +88,7 @@ public class PaintManager : Singleton<PaintManager>{
 
         Graphics.ExecuteCommandBuffer(command);
         command.Clear();
-        //GetPaintedTexturePercentage(paintable);
+        GetPaintedTexturePercentage(paintable);
     }
 
     public void clear(Paintable paintable){
@@ -113,10 +113,14 @@ public class PaintManager : Singleton<PaintManager>{
     public float GetPaintedTexturePercentage(Paintable paintable)
     {
         RenderTexture mask = paintable.getMask();
+        RenderTexture downscaledMask = RenderTexture.GetTemporary(128, 128, 0, RenderTextureFormat.ARGB32);
 
-        Texture2D temp = new Texture2D(mask.width, mask.height, TextureFormat.RGBA32, false);
-        RenderTexture.active = mask;
-        temp.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+        Graphics.Blit(mask, downscaledMask);
+
+        Texture2D temp = new Texture2D(downscaledMask.width, downscaledMask.height, TextureFormat.RGBA32, false);
+
+        RenderTexture.active = downscaledMask;
+        temp.ReadPixels(new Rect(0, 0, downscaledMask.width, downscaledMask.height), 0, 0);
         temp.Apply();
         RenderTexture.active = null;
 
@@ -124,7 +128,8 @@ public class PaintManager : Singleton<PaintManager>{
         int paintedPixels = 0;
         for(int i = 0; i < pixels.Length; i++)
         {
-            if(pixels[i].a > 0){
+            if(pixels[i].a > 0)
+            {
                 paintedPixels++;
             }
         }
