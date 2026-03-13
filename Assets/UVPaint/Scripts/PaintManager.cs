@@ -88,6 +88,48 @@ public class PaintManager : Singleton<PaintManager>{
 
         Graphics.ExecuteCommandBuffer(command);
         command.Clear();
+        //GetPaintedTexturePercentage(paintable);
+    }
+
+    public void clear(Paintable paintable){
+        RenderTexture mask = paintable.getMask();
+        RenderTexture uvIslands = paintable.getUVIslands();
+        RenderTexture extend = paintable.getExtend();
+        RenderTexture support = paintable.getSupport();
+
+        command.SetRenderTarget(mask);
+        command.ClearRenderTarget(false, true, Color.clear);
+
+        command.SetRenderTarget(extend);
+        command.ClearRenderTarget(false, true, Color.clear);
+
+        command.SetRenderTarget(support);
+        command.ClearRenderTarget(false, true, Color.clear);
+
+        Graphics.ExecuteCommandBuffer(command);
+        command.Clear();
+    }
+
+    public float GetPaintedTexturePercentage(Paintable paintable)
+    {
+        RenderTexture mask = paintable.getMask();
+
+        Texture2D temp = new Texture2D(mask.width, mask.height, TextureFormat.RGBA32, false);
+        RenderTexture.active = mask;
+        temp.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+        temp.Apply();
+        RenderTexture.active = null;
+
+        Color32[] pixels = temp.GetPixels32();
+        int paintedPixels = 0;
+        for(int i = 0; i < pixels.Length; i++)
+        {
+            if(pixels[i].a > 0){
+                paintedPixels++;
+            }
+        }
+        Debug.Log($"Painted Pixels: {paintedPixels} / {pixels.Length} ({(float)paintedPixels / pixels.Length * 100f}%)");
+        return (float)paintedPixels / pixels.Length;
     }
 
 }
