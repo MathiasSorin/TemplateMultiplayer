@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerInteraction : MonoBehaviour
 {
@@ -11,7 +9,7 @@ public class PlayerInteraction : MonoBehaviour
     private Interactable highlightedInteractable;
     private Grabbable heldObject;
 
-    public float throwForce = 10f;
+    public float throwForce = 5f;
 
     void Start()
     {
@@ -29,10 +27,15 @@ public class PlayerInteraction : MonoBehaviour
 
     private void RotateShootable()
     {
-        if (heldObject != null && heldObject is Shootable shoo)
+        if (heldObject != null && heldObject is Shootable shootable)
         {
-            Vector3 aimDirection = (_controller.mouseWorldPosition-shoo.shootPoint.position).normalized;
-            shoo.shootPoint.forward = Vector3.Lerp(shoo.shootPoint.forward, aimDirection, Time.deltaTime * 20f);
+            Vector3 aimDirection = (_controller.aimMouseWorldPosition-shootable.shootPoint.position).normalized;
+            if(player.StateAim != EnumPlayerAimState.Aiming)
+            {
+                aimDirection = player.transform.forward; // Keep the shoot point level on the horizontal plane
+            }
+            //TODO make this rotation number a variable
+            shootable.shootPoint.forward = Vector3.Lerp(shootable.shootPoint.forward, aimDirection, Time.deltaTime * 20f);
         }
     }
 
@@ -42,7 +45,16 @@ public class PlayerInteraction : MonoBehaviour
         {
             if(heldObject!=null)
             {
-                heldObject.Use(true);
+                if (highlightedInteractable != null && heldObject.canBeUsedOnType != null)
+                {
+                    heldObject.Drop();
+                    heldObject.Use(true, highlightedInteractable);
+                    Drop();
+                }
+                else
+                {
+                    heldObject.Use(true);
+                }
             }
         }
         else
@@ -74,7 +86,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 heldObject.Use(false);
                 heldObject.Throw(player.grabTransform.forward, throwForce);
-                heldObject = null;
+                Drop();
             }
             _inputs.interact = false;
         }
@@ -83,29 +95,53 @@ public class PlayerInteraction : MonoBehaviour
     private void Grab(Grabbable obj)
     {
         heldObject = obj;
-        heldObject.Highlight(false);
-        highlightedInteractable = null;
+        SetHighlightedInteractable(heldObject, false);
+    }
+
+    private void Drop()
+    {
+        heldObject = null;
     }
 
     private void OnTriggerStay(Collider collider)
     {
-        if (heldObject || player.State == EnumPlayerState.Interacting) return;
+        //TODO add method to find closest interactable if there are multiple in range
+        if (player.StateInteraction == EnumPlayerInteractionState.Interacting) return;
+
         Interactable interactable = collider.GetComponent<Interactable>();
-        if(interactable!=null)
+
+        if (interactable == null) return;
+
+        if(heldObject == null)
         {
-            highlightedInteractable = interactable;
-            interactable.Highlight(true);
+            SetHighlightedInteractable(interactable, true);
+        }
+        else if (heldObject.canBeUsedOnType != null && heldObject.canBeUsedOnType.IsAssignableFrom(interactable.GetType()))
+        {
+            SetHighlightedInteractable(interactable, true);
         }
     }
 
     private void OnTriggerExit(Collider collider)
     {
-        if (heldObject) return;
         Interactable interactable = collider.GetComponent<Interactable>();
         if(interactable!=null)
         {
-            highlightedInteractable = null;
+            SetHighlightedInteractable(interactable, false);
+        }
+    }
+
+    private void SetHighlightedInteractable(Interactable interactable, bool on)
+    {
+        if(on)
+        {
+            interactable.Highlight(true);
+            highlightedInteractable = interactable;
+        }
+        else
+        {
             interactable.Highlight(false);
+            highlightedInteractable = null;
         }
     }
 
@@ -113,8 +149,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if(highlightedInteractable!=null)
         {
-            highlightedInteractable.Highlight(false);
-            highlightedInteractable = null;
+            SetHighlightedInteractable(highlightedInteractable, false);
         }
     }
 }
