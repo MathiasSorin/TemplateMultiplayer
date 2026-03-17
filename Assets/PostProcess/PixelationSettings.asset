@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolution: 300
   renderEvent: 600
-  applyInSceneView: 1
+  applyInSceneView: 0
   effectMaterial: {fileID: 857135337115740822}
 --- !u!21 &857135337115740822
 Material:

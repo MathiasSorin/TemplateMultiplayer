@@ -456,4 +456,9 @@ public class PlayerController : MonoBehaviour
     {
         rotateOnMove = newRotateOnMove;
     }
+
+    public void DisableCharacterController(bool disable)
+    {
+        _controller.enabled = !disable;
+    }
 }
