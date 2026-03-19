@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f4227764308e84f89a765fbf315e2945
+guid: 1da15b1d522c64014bbeb329bb43be6b
 DefaultImporter:
   externalObjects: {}
   userData: 
@@ -10,5 +10,5 @@ AssetOrigin:
   productId: 143368
   packageName: 'Flat Kit: Toon Shading and Water'
   packageVersion: 4.9.9
-  assetPath: Assets/Plugins/FlatKit/[Render Pipeline] Built-In.unitypackage
-  uploadId: 883934
+  assetPath: Assets/FlatKit/FlatKit Manual.pdf
+  uploadId: 884482
