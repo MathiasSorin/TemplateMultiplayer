@@ -39,6 +39,10 @@ public class Paintable : MonoBehaviour {
         rend = GetComponent<Renderer>();
         rend.material.SetTexture(maskTextureID, extendIslandsRenderTexture);
 
+        if (customMaskTexture != null) {
+        Graphics.Blit(customMaskTexture, maskRenderTexture);
+    }
+
         PaintManager.instance.initTextures(this);
     }
 

@@ -55,6 +55,13 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    public void TeleportCharacter(Transform destination)
+    {
+        _controller.DisableCharacterController(true);
+        gameObject.transform.position = destination.position;
+        _controller.DisableCharacterController(false);
+    }
 }
 
 public enum EnumPlayerInteractionState
